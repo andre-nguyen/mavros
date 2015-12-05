@@ -22,6 +22,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <nav_msgs/Odometry.h>
 
 namespace mavplugin {
 /**
@@ -49,6 +50,7 @@ public:
 
 		local_position = lp_nh.advertise<geometry_msgs::PoseStamped>("pose", 10);
 		local_velocity = lp_nh.advertise<geometry_msgs::TwistStamped>("velocity", 10);
+		local_odom = lp_nh.advertise<nav_msgs::Odometry>("odometry", 10);
 	}
 
 	const message_map get_rx_handlers() {
@@ -63,6 +65,7 @@ private:
 
 	ros::Publisher local_position;
 	ros::Publisher local_velocity;
+	ros::Publisher local_odom;
 
 	std::string frame_id;		//!< frame for Pose
 	std::string tf_frame_id;	//!< origin for TF
@@ -79,6 +82,7 @@ private:
 
 		auto pose = boost::make_shared<geometry_msgs::PoseStamped>();
 		auto twist = boost::make_shared<geometry_msgs::TwistStamped>();
+		auto odom = boost::make_shared<nav_msgs::Odometry>();
 
 		pose->header = uas->synchronized_header(frame_id, pos_ned.time_boot_ms);
 		twist->header = pose->header;
@@ -88,7 +92,10 @@ private:
 
 		tf::vectorEigenToMsg(velocity,twist->twist.linear);
 		twist->twist.angular = imu_data->angular_velocity;
-		
+
+		odom->pose.pose = pose->pose;
+		odom->twist.twist = twist->twist;
+
 		local_position.publish(pose);
 		local_velocity.publish(twist);
 
@@ -109,5 +116,3 @@ private:
 };	// namespace mavplugin
 
 PLUGINLIB_EXPORT_CLASS(mavplugin::LocalPositionPlugin, mavplugin::MavRosPlugin)
-
-
