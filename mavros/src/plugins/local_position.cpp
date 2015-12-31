@@ -78,7 +78,8 @@ private:
 
 		auto position = UAS::transform_frame_ned_enu(Eigen::Vector3d(pos_ned.x, pos_ned.y, pos_ned.z));
 		auto velocity = UAS::transform_frame_ned_enu(Eigen::Vector3d(pos_ned.vx, pos_ned.vy, pos_ned.vz));
-		auto imu_data = uas->get_attitude_imu();
+		auto orientation = uas->get_attitude_orientation();
+		auto angular_velocity = uas->get_attitude_angular_velocity();
 
 		auto pose = boost::make_shared<geometry_msgs::PoseStamped>();
 		auto twist = boost::make_shared<geometry_msgs::TwistStamped>();
@@ -88,10 +89,10 @@ private:
 		twist->header = pose->header;
 
 		tf::pointEigenToMsg(position, pose->pose.position);
-		pose->pose.orientation = imu_data->orientation;
+		pose->pose.orientation = orientation;
 
 		tf::vectorEigenToMsg(velocity,twist->twist.linear);
-		twist->twist.angular = imu_data->angular_velocity;
+		twist->twist.angular = angular_velocity;
 
 		odom->pose.pose = pose->pose;
 		odom->twist.twist = twist->twist;
@@ -106,7 +107,7 @@ private:
 			transform.header.frame_id = tf_frame_id;
 			transform.child_frame_id = tf_child_frame_id;
 
-			transform.transform.rotation = imu_data->orientation;
+			transform.transform.rotation = orientation;
 			tf::vectorEigenToMsg(position, transform.transform.translation);
 
 			uas->tf2_broadcaster.sendTransform(transform);

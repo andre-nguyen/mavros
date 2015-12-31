@@ -2,6 +2,22 @@
 Changelog for package mavros_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.16.4 (2015-12-14)
+-------------------
+* Update mavlink message documentation links
+* remove "altitude\_" prefix from members
+* implemented altitude plugin
+* Contributors: Andreas Antener, Vladimir Ermakov
+
+0.16.3 (2015-11-19)
+-------------------
+
+0.16.2 (2015-11-17)
+-------------------
+
+0.16.1 (2015-11-13)
+-------------------
+
 0.16.0 (2015-11-09)
 -------------------
 * msgs `#418 <https://github.com/mavlink/mavros/issues/418>`_: add message for attitude setpoints
