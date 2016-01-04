@@ -97,6 +97,7 @@ private:
 		odom->pose.pose = pose->pose;
 		odom->twist.twist = twist->twist;
 
+		local_odom.publish(odom);
 		local_position.publish(pose);
 		local_velocity.publish(twist);
 
